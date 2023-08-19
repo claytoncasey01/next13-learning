@@ -1,36 +1,36 @@
-"use client";
-
-import { FormEvent } from "react";
+import { prisma } from "@/lib/prisma";
+import { redirect } from "next/navigation";
 
 interface Props {
   user: any;
 }
 
 export default function ProfileForm({ user }: Props) {
-  const updateUser = async (e: FormEvent<HTMLFormElement>) => {
-    e.preventDefault();
+  // This can be extracted to its own file to be used in a client component
+  async function updateUser(formData: FormData) {
+    "use server";
 
-    const formData = new FormData(e.currentTarget);
-
-    const body = {
+    const data = {
       name: formData.get("name"),
       bio: formData.get("bio"),
-      age: formData.get("age"),
+      age: Number(formData.get("age")),
       image: formData.get("image"),
-    };
+    } as any;
 
-    fetch("/api/user", {
-      method: "PUT",
-      body: JSON.stringify(body),
-      headers: {
-        "Content-Type": "application/json",
+    await prisma.user.update({
+      where: {
+        email: user?.email ?? "",
       },
+      data,
     });
-  };
+
+    redirect(`/users/${user.id}`);
+  }
+
   return (
     <>
       <h2 className="text-xl font-bold">Edit Your Profile</h2>
-      <form onSubmit={updateUser}>
+      <form action={updateUser}>
         <div className="mb-6">
           <label
             htmlFor="name"
@@ -57,6 +57,7 @@ export default function ProfileForm({ user }: Props) {
             name="bio"
             cols={30}
             className="shadow-sm border text-sm rounded-lg block w-full p-2.5 bg-gray-700 border-gray-600 placeholder-gray-400 text-white focus:ring-blue-500 focus:border-blue-500 shadow-sm-light"
+            defaultValue={user?.bio ?? ""}
           />
         </div>
         <div className="mb-6">

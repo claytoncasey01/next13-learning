@@ -17,7 +17,7 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
 
 export default async function UserProfilePage({ params }: Props) {
   const user = await prisma.user.findUnique({ where: { id: params.id } });
-  const { name, bio, image } = user ?? {};
+  const { name, bio, image, age } = user ?? {};
 
   return (
     <div>
@@ -29,8 +29,11 @@ export default async function UserProfilePage({ params }: Props) {
         className="rounded-md my-4"
         alt={`${name}'s profile`}
       />
-      <h3 className="font-bold">Bio</h3>
-      <p>{bio ?? "This user has no bio, very mysterious they are."}</p>
+      <div className="mx-2">
+        <h3 className="font-bold">Bio</h3>
+        <p>{bio ?? "This user has no bio, very mysterious they are."}</p>
+      </div>
+      <h4 className="font-semibold mb-4">{`Age: ${age}`}</h4>
       <FollowButton targetUserId={user?.id ?? ""} />
     </div>
   );

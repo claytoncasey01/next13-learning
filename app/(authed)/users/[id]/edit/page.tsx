@@ -11,10 +11,5 @@ export default async function UserEditProfile() {
     where: { email: currentUserEmail },
   });
 
-  return (
-    <>
-      <h1> Edit Profile</h1>
-      <ProfileForm user={user} />
-    </>
-  );
+  return <ProfileForm user={user} />;
 }
